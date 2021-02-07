@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="edu.ahau.graduationproject.mapper.UserMapper">
+    <resultMap id="teachermap" type="edu.ahau.graduationproject.dto.UserDTO">
+        <id property="ID" column="tch_id"/>
+        <result property="password" column="tch_password"/>
+    </resultMap>
+    <select id="selectTeacherById" resultType="edu.ahau.graduationproject.dto.UserDTO" parameterType="string" resultMap="teachermap">
+        select tch_id,tch_password from tch_infor where tch_id=#{id}
+    </select>
+    <resultMap id="stumap" type="edu.ahau.graduationproject.dto.UserDTO">
+        <id property="ID" column="stu_id"/>
+        <result property="password" column="stu_password"/>
+    </resultMap>
+    <select id="selectStudentById"  parameterType="string" resultMap="stumap">
+        select stu_id,stu_password from stu_infor where stu_id=#{id}
+    </select>
+</mapper>

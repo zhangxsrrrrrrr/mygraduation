@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+   <link th:insert="body1::head">
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+	<!--body1.html中抽取-->
+	<div th:replace="body1::#header"></div>
+
+	<div th:replace="body1::#side"></div>
+
+	<div th:insert="body1::#script"></div>
+	<!--抽取内容结束-->
+
+    <div class="layui-body" id="body">
+        <!-- 内容主体区域 -->
+		<table id="demo" lay-filter="test"></table>
+
+		<script src="layui.js"></script>
+		<script>
+			layui.use('table', function(){
+				var table = layui.table;
+
+				//第一个实例
+				table.render({
+					elem: '#demo'
+					,height: 312
+					,url: '/student/teacherInfor/' //数据接口
+					,page: true //开启分页
+					,cols: [
+							[ //表头
+						{field: 'id', title: '工号', width:80, fixed: 'left'}
+						,{field: 'course', title: '课程', width:80}
+						,{field: 'teacherName', title: '姓名', width:80, }
+						,{field: 'qQ', title: 'QQ', width:80}
+						,{field: 'phoneNumber', title: '电话号码', width: 177}
+					]
+					]
+				});
+
+			});
+		</script>
+		<!--内容结束 -->
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+</body>
+</html>

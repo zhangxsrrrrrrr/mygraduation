@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+	  xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!--	<meta charset="utf-8">-->
+<!--	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">-->
+<!--	<title>学生后台信息</title>-->
+<!--	<link rel="stylesheet" href="css/layui.css">-->
+	<link th:include="body1::head">
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+	<!--body1.html中抽取-->
+    <div th:replace="body1::#header"></div>
+
+    <div th:replace="body1::#side"></div>
+
+	<div th:insert="body1::script"></div>
+	<!--抽取内容结束-->
+    <div class="layui-body" id="body">
+		<!-- 内容主体区域 -->
+
+		<form class="layui-form" action="/student/doBind" method="get">
+			<label  th:text="${message}"></label>
+			<div class="layui-form-item">
+				<div class="layui-col-md7">
+					<label class="layui-form-label">绑定手机号</label>
+					<div class="layui-input-block">
+						<input type="text" name="phonenumber" lay-verify="title" autocomplete="off" placeholder="请输入手机号" class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<div class="layui-col-md7">
+					<label class="layui-form-label">绑定邮箱号</label>
+					<div class="layui-input-block">
+						<input type="text" name="qq" lay-verify="title" autocomplete="off" placeholder="请输入QQ号" class="layui-input">
+					</div>
+				</div>
+			</div>
+			<div class="layui-form-item">
+			    <div class="layui-input-block">
+			      <button type="submit" class="layui-btn" lay-submit="" lay-filter="demo1">立即提交</button>
+			    </div>
+			  </div>
+		</form>
+		<!--内容结束 -->
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+
+</body>
+</html>

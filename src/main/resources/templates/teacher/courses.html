@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head >
+ <link th:insert="body1::head">
+
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="body::#header"></div>
+
+    <div th:replace="body::#side"></div>
+
+    <div th:insert="body::#script"></div>
+    <div class="layui-body" id="body">
+        <!-- 内容主体区域 -->
+        <a th:href="@{/teacher/viewCourses}" href="http://www.layui.com" class="layui-btn">一个可跳转的按钮</a>
+        <table  id="test"></table>
+
+
+
+        <script src="layui.js"></script>
+        <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+
+        <script>
+            layui.use('table', function(){
+                var table = layui.table;
+                table.render({
+                    elem: '#test'
+                    ,url:'/teacher/viewCourses/'
+                    ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+                    ,cols: [
+                        [
+                        {field:'courseId', title: '课程号'}
+                        ,{field:'courseName', title: '课程名'}
+                        ,{field:'studentNumber', title: '学生数'}
+                    ]
+                    ]
+                });
+            });
+
+        </script>
+
+        <!--内容结束 -->
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+
+</body>
+</html>

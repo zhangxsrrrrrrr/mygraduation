@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <link th:include="body1::head">
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="body1::#header"></div>
+    <div th:replace="body1::#side"></div>
+
+    <div class="layui-body" id="body">
+        <!-- 内容主体区域 -->
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md4">
+              <div class="layui-card">
+                <div class="layui-card-header layui-bg-green">学号</div>
+                <div class="layui-card-body">
+                  [[${information.stuId}]]<br>
+
+                </div>
+              </div>
+            </div>
+			<!--信息之间产生间距-->
+			<div class="layui-col-md1"></div>
+            <div class="layui-col-md4">
+              <div class="layui-card">
+                <div class="layui-card-header layui-bg-green">姓名</div>
+                <div class="layui-card-body">
+                    [[${information.stuName}]]<br>
+
+                </div>
+              </div>
+            </div>
+			<div class="layui-col-md4">
+			  <div class="layui-card">
+			    <div class="layui-card-header layui-bg-green">专业</div>
+			    <div class="layui-card-body">
+                    [[${information.stuMajor}]]<br>
+
+			    </div>
+			  </div>
+			</div>
+			<!--信息之间产生间距-->
+			<div class="layui-col-md1"></div>
+			<div class="layui-col-md4">
+			  <div class="layui-card">
+			    <div class="layui-card-header layui-bg-green">手机号</div>
+			    <div class="layui-card-body">
+                    [[${information.stuPhoneNumber}]]<br>
+
+			    </div>
+			  </div>
+			</div>
+			<div class="layui-col-md4">
+			  <div class="layui-card">
+			    <div class="layui-card-header layui-bg-green">QQ号</div>
+			    <div class="layui-card-body">
+                    [[${information.stuQQ}]]<br>
+			    </div>
+			  </div>
+			</div>
+    </div>
+    </div>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+<div th:insert="body1::script"></div>
+<!--<script src="layui.js"></script>-->
+<!--<script>-->
+<!--//JavaScript代码区域-->
+<!--layui.use('element', function(){-->
+<!--  var element = layui.element;-->
+<!--  -->
+<!--});-->
+<!--</script>-->
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahau.graduationproject.mapper.StudentMapper">
+    <update id="bindPhoneNumberOrQQ">
+        update stu_infor set stu_qq=#{QQ},stu_phone=#{phone} where stu_id=#{id}
+    </update>
+    <update id="updatePassword">
+        update stu_infor set stu_password=#{password} where stu_id=#{id}
+    </update>
+    <select id="selectStudentByID" resultType="student" parameterType="string">
+        select * from stu_infor where stu_id=#{id}
+    </select>
+    <resultMap id="grades" type="edu.ahau.graduationproject.dto.StudentGradesDTO">
+        <result property="course" column="c_name"/>
+        <result property="grade" column="grade"/>
+        <result property="teacher" column="tch_name"/>
+    </resultMap>
+    <select id="selectStudentGradesByID" resultMap="grades">
+        select c.c_name,ti.tch_name,g.grade  from grades g left join stu_infor s on s.stu_id=g.s_id
+                                left join course c on g.c_id = c.c_id
+                                left join t_teacher_course ttc on c.c_id = ttc.c_id
+                                left join tch_infor ti on ttc.t_id=tch_id
+                                where s.stu_id=#{id}
+    </select>
+    <resultMap id="teacherInfor" type="edu.ahau.graduationproject.dto.TeacherOfStudentInforDTO">
+        <result property="course" column="c_name" />
+        <result property="id" column="tch_id" />
+        <result property="phoneNumber" column="tch_phone"/>
+        <result property="QQ" column="tch_QQ" />
+        <result property="teacherName" column="tch_name" />
+    </resultMap>
+    <select id="selectTeacherInforById" resultMap="teacherInfor">
+        select c.c_name,ti.tch_id,ti.tch_name,ti.tch_phone,ti.tch_QQ  from grades g left join stu_infor s on s.stu_id=g.s_id
+                                                           left join course c on g.c_id = c.c_id
+                                                           left join t_teacher_course ttc on c.c_id = ttc.c_id
+                                                           left join tch_infor ti on ttc.t_id=tch_id
+                                                           where s.stu_id=#{id}
+    </select>
+</mapper>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:include="body1::head">
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="body1::#header"></div>
+    <div th:replace="body1::#side"></div>
+
+
+
+    <div class="layui-body" id="body">
+		<a th:href="@{/student/getGrade}" href="http://www.layui.com" class="layui-btn">一个可跳转的按钮</a>
+       <!--主题内容开始-->
+		    <table id="test" class="layui-table" lay-data="{height:315, url:'/student/getGrade/', page:true, id:'test'}" lay-filter="test">
+		      <thead>
+		        <tr>
+		          <th lay-data="{field:'course', width:88}">课程名</th>
+		          <th lay-data="{field:'teacher', width:80}">教师</th>
+		          <th lay-data="{field:'grade', width:80, sort: true}">成绩</th>
+		          <!-- <th lay-data="{field:'city'}">城市</th>
+		          <th lay-data="{field:'sign'}">签名</th>
+		          <th lay-data="{field:'experience', sort: true}">积分</th>
+		          <th lay-data="{field:'score', sort: true}">评分</th>
+		          <th lay-data="{field:'classify'}">职业</th>
+		          <th lay-data="{field:'wealth', sort: true}">财富</th> -->
+		        </tr>
+		      </thead>
+		    </table>
+		                  
+		              
+		    <script src="layui.js" charset="utf-8"></script>
+		    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
+		     
+		    <script>
+		    layui.use('table', function(){
+		      var table = layui.table;
+		      
+		      table.render({
+		        elem: '#test'
+		        ,url:'/student/getGrade/'
+		        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+		        ,cols: [
+					  [
+					  {field: 'course', width: 80, title: '课程名'}
+					  , {field: 'teacher', width: 80, title: '老师'}
+					  , {field: 'grade', width: 80, title: '成绩', sort: true}
+			  ]
+				  ]
+		      });
+		    });
+		    </script>
+
+		<!--内容结束 -->
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+<script src="../../static/student/layui.js"></script>
+<script>
+//JavaScript代码区域
+layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script>
+</body>
+</html>

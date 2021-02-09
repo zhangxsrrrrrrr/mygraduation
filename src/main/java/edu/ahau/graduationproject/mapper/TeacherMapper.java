@@ -1,6 +1,7 @@
 package edu.ahau.graduationproject.mapper;
 
 import edu.ahau.graduationproject.domain.Teacher;
+import edu.ahau.graduationproject.dto.AllStudentGradesDTO;
 import edu.ahau.graduationproject.dto.CourseOfTeacherDTO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -30,4 +31,8 @@ public interface TeacherMapper {
     List<String> selectCourseIDById(@Param("id") String teacherID);
     CourseOfTeacherDTO selectStudentNumber(@Param("id") String id);
 
+    /**
+     *查询老师某一门课的所有学生成绩
+     */
+    List<AllStudentGradesDTO> selectAllStudentGrades(@Param("courseID") String courseID);
 }

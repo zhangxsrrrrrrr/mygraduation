@@ -3,10 +3,7 @@ package edu.ahau.graduationproject;
 
 
 import com.alibaba.fastjson.JSON;
-import edu.ahau.graduationproject.dto.CourseOfTeacherDTO;
-import edu.ahau.graduationproject.dto.StudentGradesDTO;
-import edu.ahau.graduationproject.dto.TeacherOfStudentInforDTO;
-import edu.ahau.graduationproject.dto.UserDTO;
+import edu.ahau.graduationproject.dto.*;
 import edu.ahau.graduationproject.mapper.StudentMapper;
 import edu.ahau.graduationproject.mapper.TeacherMapper;
 import edu.ahau.graduationproject.mapper.UserMapper;
@@ -48,6 +45,7 @@ class GraduationprojectApplicationTests {
     @Test
     public void test113(){
 
-
+        List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades("1");
+        System.out.println(allStudentGradesDTOS.toString());
     }
 }

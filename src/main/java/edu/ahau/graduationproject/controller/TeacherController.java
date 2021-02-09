@@ -4,18 +4,25 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.annotation.ResponseJSONP;
 import edu.ahau.graduationproject.domain.Teacher;
+import edu.ahau.graduationproject.dto.AllStudentGradesDTO;
 import edu.ahau.graduationproject.dto.CourseOfTeacherDTO;
 import edu.ahau.graduationproject.mapper.TeacherMapper;
 import edu.ahau.graduationproject.utils.IDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.runtime.directive.Foreach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,5 +101,59 @@ public class TeacherController {
 
 
         return result;
+    }
+
+    @GetMapping("/grades")
+    public String grades(){
+        return "teacher/viewgrades";
+    }
+
+    @GetMapping("/selectid")
+    public String selectCourse( HttpServletRequest request,
+                                Model model,
+                                @RequestParam(value = "courseid") String courseid){
+        HttpSession session = request.getSession();
+        HashMap<String, Object> hashMap = new HashMap<>();
+        List<CourseOfTeacherDTO> dtos = new ArrayList<>();
+        //查询课程的信息
+        List<String> ids = teacherMapper.selectCourseIDById(IDUtil.getID(request));
+        if (!ids.contains(courseid)){
+            hashMap.put("msg","输入的课程号不正确，请重新输入");
+            hashMap.put("isRemove","1");
+            model.addAllAttributes(hashMap);
+        }else {
+            if (session.getAttribute("courseid")!=null){
+                session.removeAttribute("courseid");
+                session.setAttribute("courseid", courseid);
+            }else {
+                session.setAttribute("courseid", courseid);
+            }
+        }
+        return "teacher/viewgrades";
+    }
+    @ResponseJSONP
+    @ResponseBody
+    @GetMapping("/viewgrades")
+    public Object allStudentGrade(HttpServletRequest request,
+                                  HttpServletResponse response) throws ServletException, IOException {
+        HashMap<String, Object> map = new HashMap<>();
+
+
+        String courseid = (String) request.getSession().getAttribute("courseid");
+
+        //查询课程的信息
+        List<String> ids = teacherMapper.selectCourseIDById(IDUtil.getID(request));
+        if (!ids.contains(courseid)){
+
+            request.getRequestDispatcher("teacher/grades").forward(request,response);
+            return null;
+        }
+        List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades(courseid);
+        map.put("code",0);
+        map.put("msg","");
+        map.put("data",allStudentGradesDTOS);
+        map.put("count",2);
+        log.info("{}",JSONObject.parse(JSON.toJSONString(map)));
+        return JSONObject.parse(JSON.toJSONString(map));
     }
 }

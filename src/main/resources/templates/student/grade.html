@@ -6,8 +6,11 @@
 <body class="layui-layout-body">
 
 <div class="layui-layout layui-layout-admin">
-    <div th:replace="body1::#header"></div>
-    <div th:replace="body1::#side"></div>
+	<div th:replace="body::#header"></div>
+
+	<div th:replace="body::#side"></div>
+
+	<div th:insert="body::#script"></div>
 
 
 
@@ -40,7 +43,7 @@
 		      
 		      table.render({
 		        elem: '#test'
-		        ,url:'/student/getGrade/'
+		        ,url:'/student/viewgrades/'
 		        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 		        ,cols: [
 					  [
@@ -61,13 +64,6 @@
         © 张汛的毕业设计作品 2021.2
     </div>
 </div>
-<script src="../../static/student/layui.js"></script>
-<script>
-//JavaScript代码区域
-layui.use('element', function(){
-  var element = layui.element;
-  
-});
-</script>
+
 </body>
 </html>

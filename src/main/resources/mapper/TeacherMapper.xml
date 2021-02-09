@@ -30,4 +30,19 @@
         WHERE
             ttc.t_id=#{id}
     </select>
+
+    <resultMap id="allStudentGrades" type="edu.ahau.graduationproject.dto.AllStudentGradesDTO">
+        <result column="grade" property="grade" />
+        <result column="stu_id" property="id"/>
+        <result column="c_name" property="course"/>
+        <result column="stu_name" property="username"/>
+    </resultMap>
+    <select id="selectAllStudentGrades" resultMap="allStudentGrades">
+        select g.grade,si.stu_id,c.c_name,si.stu_name from grades g
+                          right join course c on g.c_id = c.c_id
+                          LEFT JOIN t_teacher_course ttc on ttc.c_id = c.c_id
+                          LEFT JOIN tch_infor ti on ttc.t_id = ti.tch_id
+                          left join stu_infor si on si.stu_id=g.s_id
+        where g.c_id= #{courseID}
+    </select>
 </mapper>

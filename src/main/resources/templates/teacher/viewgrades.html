@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="body::#head">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>教师信息</title>
-    <link rel="stylesheet" href="../../static/student/css/layui.css">
+<head >
+
+    <link th:replace="body::head">
 </head>
 <body class="layui-layout-body">
 
@@ -14,23 +12,22 @@
 
     <div class="layui-body" id="body">
         <!-- 内容主体区域 -->
-		<table class="layui-table" lay-data="{height:315, url:'/demo/table/user/', page:true, id:'test'}" lay-filter="test">
-		  <thead>
-		    <tr>
-		      <th lay-data="{field:'id', width:80, sort: true}">学号</th>
-		      <th lay-data="{field:'username', width:80}">姓名</th>
-		      <th lay-data="{field:'course', width:80}">学科</th>
-		      <th lay-data="{field:'grade', sort: true}">成绩</th>
-		    <!--  <th lay-data="{field:'sign'}">签名</th>
-		      <th lay-data="{field:'experience', sort: true}">积分</th>
-		      <th lay-data="{field:'score', sort: true}">评分</th>
-		      <th lay-data="{field:'classify'}">职业</th>
-		      <th lay-data="{field:'wealth', sort: true}">财富</th> -->
-		    </tr>
-		  </thead>
+
+        <form class="layui-form" action="/teacher/selectid" method="get">
+            <label th:text="${msg}"></label>
+            <div class="layui-form-item">
+                <label class="layui-form-label">输入课程号</label>
+                <div class="layui-input-block">
+                    <input type="text" name="courseid" lay-verify="title" autocomplete="off" placeholder="请输入课程号" class="layui-input">
+                </div>
+            </div>
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-radius">提交查看</button>
+        </form>
+		<table class="layui-hide" id="demo" lay-filter="test">
+
 		</table>
 		 
-		<script src="../../static/student/layui.js"></script>
+		<script src="layui.js"></script>
 		<script>
 		layui.use('table', function(){
 		  var table = layui.table;
@@ -39,19 +36,21 @@
 		  table.render({
 		    elem: '#demo'
 		    ,height: 312
-		    ,url: '/demo/table/user/' //数据接口
+		    ,url: '/teacher/viewgrades' //数据接口
 		    ,page: true //开启分页
-		    ,cols: [[ //表头
-		      {field: 'id', title: '学号', width:80, sort: true, fixed: 'left'}
+		    ,cols: [
+		        [ //表头
+               {field: 'course', title: '学科', width:80}
+		      ,{field: 'id', title: '学号', width:100, sort: true}
 		      ,{field: 'username', title: '姓名', width:80}
-		      ,{field: 'sex', title: '学科', width:80}
-		      ,{field: 'city', title: '成绩', width:80, sort: true} 
+		      ,{field: 'grade', title: '成绩', width:80, sort: true}
 		      // ,{field: 'sign', title: '签名', width: 177}
 		      // ,{field: 'experience', title: '积分', width: 80, sort: true}
 		      // ,{field: 'score', title: '评分', width: 80, sort: true}
 		      // ,{field: 'classify', title: '职业', width: 80}
 		      // ,{field: 'wealth', title: '财富', width: 135, sort: true}
-		    ]]
+		    ]
+              ]
 		  });
 		  
 		});

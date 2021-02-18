@@ -35,4 +35,9 @@ public interface TeacherMapper {
      *查询老师某一门课的所有学生成绩
      */
     List<AllStudentGradesDTO> selectAllStudentGrades(@Param("courseID") String courseID);
+
+    /**
+     * 修改成绩
+     */
+    int updateGradesById(@Param("id") String id, @Param("grade") String grade, @Param("courseId") String courseId);
 }

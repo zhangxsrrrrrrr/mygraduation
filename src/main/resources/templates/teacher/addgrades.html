@@ -1,107 +1,159 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="body::#head">
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>教师信息</title>
-    <link rel="stylesheet" href="../../static/student/css/layui.css">
+<head>
+	<link th:replace="body::head">
+
 </head>
 <body class="layui-layout-body">
 
 <div class="layui-layout layui-layout-admin">
     <div th:replace="body::#header"></div>
     <div th:replace="body::#side"></div>
+	<div th:insert="body::#script"></div>
 
-    <div class="layui-body" id="body">
+	<div class="layui-body" id="body">
         <!-- 内容主体区域 -->
-		<table class="layui-table" lay-data="{width: 892, height:330, url:'/demo/table/user/', page:true, id:'idTest'}" lay-filter="demo">
-		  <thead>
-		    <tr>
-		      <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-		      <th lay-data="{field:'id', width:80, sort: true, fixed: true}">ID</th>
-		      <th lay-data="{field:'username', width:80}">用户名</th>
-		      <th lay-data="{field:'sex', width:80, sort: true}">性别</th>
-		      <th lay-data="{field:'city', width:80}">城市</th>
-		      <th lay-data="{field:'sign', width:160}">签名</th>
-		      <th lay-data="{field:'experience', width:80, sort: true}">积分</th>
-		      
-		      <th lay-data="{field:'classify', width:80}">职业</th>
-		      <th lay-data="{field:'wealth', width:135, sort: true}">财富</th>
-		      <th lay-data="{field:'score', width:80, sort: true, fixed: 'right'}">评分</th>
-		      <th lay-data="{fixed: 'right', width:178, align:'center', toolbar: '#barDemo'}"></th>
-		    </tr>
-		  </thead>
-		</table>
-		 
-		<script type="text/html" id="barDemo">
-		  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
-		  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-		  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-		</script>
-		               
-		          
-		<script src="../../static/student/layui.js" charset="utf-8"></script>
-		<!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
-		<script>
-		layui.use('table', function(){
-		  var table = layui.table;
-		  //监听表格复选框选择
-		  table.on('checkbox(demo)', function(obj){
-		    console.log(obj)
-		  });
-		  //监听工具条
-		  table.on('tool(demo)', function(obj){
-		    var data = obj.data;
-		    if(obj.event === 'detail'){
-		      layer.msg('ID：'+ data.id + ' 的查看操作');
-		    } else if(obj.event === 'del'){
-		      layer.confirm('真的删除行么', function(index){
-		        obj.del();
-		        layer.close(index);
-		      });
-		    } else if(obj.event === 'edit'){
-		      layer.alert('编辑行：<br>'+ JSON.stringify(data))
-		    }
-		  });
-		  
-		  var $ = layui.$, active = {
-		    getCheckData: function(){ //获取选中数据
-		      var checkStatus = table.checkStatus('idTest')
-		      ,data = checkStatus.data;
-		      layer.alert(JSON.stringify(data));
-		    }
-		    ,getCheckLength: function(){ //获取选中数目
-		      var checkStatus = table.checkStatus('idTest')
-		      ,data = checkStatus.data;
-		      layer.msg('选中了：'+ data.length + ' 个');
-		    }
-		    ,isAll: function(){ //验证是否全选
-		      var checkStatus = table.checkStatus('idTest');
-		      layer.msg(checkStatus.isAll ? '全选': '未全选')
-		    }
-		  };
-		  
-		  $('.demoTable .layui-btn').on('click', function(){
-		    var type = $(this).data('type');
-		    active[type] ? active[type].call(this) : '';
-		  });
-		});
-		</script>
-		<!--内容结束 -->
-    </div>
+		<table class="layui-hide" id="demo" lay-filter="test"></table>
 
-    <div class="layui-footer">
-        <!-- 底部固定区域 -->
-        © 张汛的毕业设计作品 2021.2
-    </div>
+		<div id="update-user-layer" style="display: none; padding: 20px">
+			<form id="update-user-form" class="layui-form layui-form-pane" lay-filter="update-user-form">
+				<div class="layui-form-item">
+					<label class="layui-form-label">学号</label>
+					<div class="layui-input-block">
+						<input type="text" name="id" class="layui-input" lay-verify="required" autocomplete="off">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">课程号</label>
+					<div class="layui-input-block">
+						<input type="text" name="courseId" class="layui-input" lay-verify="required" autocomplete="off">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">成绩</label>
+					<div class="layui-input-block">
+						<input type="text" name="grade" class="layui-input" lay-verify="required">
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<div class="layui-input-block">
+						<button class="layui-btn" type="submit" lay-submit lay-filter="update-user-form-submit">提交</button>
+						<button type="reset" class="layui-btn layui-btn-primary">重置</button>
+					</div>
+				</div>
+			</form>
+		</div>
+		<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+		<script src="layui.js"></script>
+		<script type="text/html" id="barDemo">
+			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+		</script>
+
+		<script>
+
+			layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'form'], function(){
+				var laydate = layui.laydate //日期
+						,laypage = layui.laypage //分页
+						,layer = layui.layer //弹层
+						,table = layui.table //表格
+						,carousel = layui.carousel //轮播
+						,upload = layui.upload //上传
+						,element = layui.element //元素操作
+						,slider = layui.slider //滑块
+						,form = layui.form
+				//向世界问个好
+				layer.msg('球球给个过吧！！');
+				element.on('tab(demo)', function(data){
+					layer.tips('切换了 '+ data.index +'：'+ this.innerHTML, this, {
+						tips: 1
+					});
+				});
+				table.render({
+					elem: '#demo'
+					,height: 420
+					,url: '/teacher/viewgrades' //数据接口
+					,title: '用户表'
+					,page: true //开启分页
+					,toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+					,totalRow: true //开启合计行
+					,cols: [
+							[ //表头
+						{field: 'courseId', title: '课程号', width:80, sort: true, fixed: 'left'}
+						,{field: 'id', title: '学号', width:80, sort: true}
+						,{field: 'username', title: '姓名', width:80}
+						,{field: 'course', title: '课程名字', width: 90, sort: true, totalRow: true}
+						,{field: 'grade', title: '成绩', width:80, sort: true}
+						,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+					]
+					],
+					id: 'user-tbl',
+				});
+
+				table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+					var data = obj.data //获得当前行数据
+							,layEvent = obj.event; //获得 lay-event 对应的值
+					if(layEvent === 'detail'){
+						layer.msg('查看操作');
+					} else if(layEvent === 'del'){
+						layer.confirm('真的删除行么', function(index){
+							obj.del(); //删除对应行（tr）的DOM结构
+							layer.close(index);
+							//向服务端发送删除指令
+						});
+					} else if(layEvent === 'edit'){
+
+						form.val('update-user-form', {
+							"id": data.id ,
+
+							"courseId": data.courseId
+						});
+						layer.open({
+							type: 1,
+							title: '更新用户',
+							skin: 'layui-layer-molv',
+							area: ['500px'],
+							shade: 0.0,
+							content: $('#update-user-layer')
+						});
+						// 更新用户表单提交
+						form.on('submit(update-user-form-submit)', function(data) {
+							// ajax方式更新用户
+							$.ajax({
+								url: "/teacher/edit",
+								type: "PUT",
+								data: JSON.stringify(data.field),
+								contentType: 'application/json',
+								dataType: 'json',
+								success: function(data) {
+									if (data.status == 1) {
+										layer.close(layer.index);
+										layer.msg('更新成功');
+										table.reload('user-tbl');
+									} else {
+										layer.msg('更新失败');
+									}
+								},
+								error: function() {
+									console.log("ajax error");
+								}
+							});
+							// 阻止表单跳转
+							return false;
+						});
+					}
+				});
+			});
+
+
+
+		</script>
+	</div>
+	<div class="layui-footer">
+		<!-- 底部固定区域 -->
+		© 张汛的毕业设计作品 2021.2
+	</div>
 </div>
-<script src="../../static/student/layui.js"></script>
-<script>
-//JavaScript代码区域
-layui.use('element', function(){
-  var element = layui.element;
-  
-});
-</script>
 </body>
 </html>

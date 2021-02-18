@@ -18,4 +18,5 @@ public class AllStudentGradesDTO implements Serializable {
     private String username;
     private String course;
     private String grade;
+    private String courseId;
 }

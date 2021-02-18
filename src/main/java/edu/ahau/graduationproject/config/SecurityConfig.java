@@ -44,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //释放静态资源
         http.authorizeRequests()
                 .antMatchers("/assets/css/**","/assets/js/**","/css/**,/js/**","/font/**","/images/**"
-                        ,"/lay/**","layui.js","layui.all.js","favicon.ico").permitAll()
+                        ,"/lay/**","layui.js","layui.all.js","favicon.ico","/webjars/jquery/3.4.1/jquery.min.js").permitAll()
                 .antMatchers("student/**").permitAll();
 
 

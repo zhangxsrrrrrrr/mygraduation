@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link th:include="body::head">
+</head>
+<body class="layui-layout-body">
+
+<div class="layui-layout layui-layout-admin">
+    <div th:replace="body::#header"></div>
+    <div th:replace="body::#side"></div>
+    <div th:insert="body::#script"></div>
+
+    <div class="layui-body" id="body">
+        <!-- 内容主体区域 -->
+		<div class="layui-upload-drag" id="test10">
+		  <i class="layui-icon"></i>
+		  <p>点击上传，或将文件拖拽到此处</p>
+		  <div class="layui-hide" id="uploadDemoView">
+		    <hr>
+		    <img src="" alt="上传成功后渲染" style="max-width: 196px">
+		  </div>
+		</div>
+		<!--内容结束 -->
+    </div>
+<script>
+layui.use('upload', function() {
+    var $ = layui.jquery
+        , upload = layui.upload;
+
+    upload.render({
+        elem: '#test10'
+        , url: '/teacher/authorization' //改成您自己的上传接口
+        , accept: 'file'
+        , choose: function (obj) {
+            var file = obj.pushFile();
+           console.log(file)
+        }
+        , done: function (res) {
+            layer.msg('上传成功');
+            // layui.$('#uploadDemoView').removeClass('layui-hide').find('xlsx').attr('src', res.files.file);
+            // console.log(res)
+        }
+
+    });
+})
+ </script>
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © 张汛的毕业设计作品 2021.2
+    </div>
+</div>
+
+</body>
+</html>

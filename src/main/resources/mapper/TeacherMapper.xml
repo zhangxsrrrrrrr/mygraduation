@@ -4,6 +4,9 @@
     <update id="updatePassword">
         update tch_infor set tch_password=#{password} where tch_id=#{id}
     </update>
+    <update id="updateGradesById">
+        update grades set grades.grade=#{grade} where s_id=#{id} and c_id=#{courseId}
+    </update>
     <select id="selectTeacherInfor" resultType="edu.ahau.graduationproject.domain.Teacher">
         select * from tch_infor where tch_id=#{id}
     </select>
@@ -36,9 +39,10 @@
         <result column="stu_id" property="id"/>
         <result column="c_name" property="course"/>
         <result column="stu_name" property="username"/>
+        <result column="c_id" property="courseId"/>
     </resultMap>
     <select id="selectAllStudentGrades" resultMap="allStudentGrades">
-        select g.grade,si.stu_id,c.c_name,si.stu_name from grades g
+        select g.grade,si.stu_id,c.c_name,si.stu_name,g.c_id from grades g
                           right join course c on g.c_id = c.c_id
                           LEFT JOIN t_teacher_course ttc on ttc.c_id = c.c_id
                           LEFT JOIN tch_infor ti on ttc.t_id = ti.tch_id

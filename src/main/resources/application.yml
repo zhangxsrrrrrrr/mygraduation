@@ -1,6 +1,6 @@
 # 端口
 server:
-  port: 8080
+  port: 7090
 
 # 多环境配置
 spring:

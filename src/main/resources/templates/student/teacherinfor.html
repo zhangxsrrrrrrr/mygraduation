@@ -18,7 +18,6 @@
         <!-- 内容主体区域 -->
 		<table id="demo" lay-filter="test"></table>
 
-		<script src="layui.js"></script>
 		<script>
 			layui.use('table', function(){
 				var table = layui.table;
@@ -28,7 +27,6 @@
 					elem: '#demo'
 					,height: 312
 					,url: '/student/teacherInfor/' //数据接口
-					,page: true //开启分页
 					,cols: [
 							[ //表头
 						{field: 'id', title: '工号', width:80, fixed: 'left'}

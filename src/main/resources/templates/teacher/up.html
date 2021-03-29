@@ -11,6 +11,11 @@
     <div th:replace="body::#side"></div>
 	<div th:insert="body::#script"></div>
 
+	<script type="text/html" id="barDemo">
+		<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+
+		<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+	</script>
 
 	<div class="layui-body" id="body">
         <!-- 内容主体区域 -->
@@ -22,23 +27,40 @@
 				<img src="" alt="上传成功后渲染" style="max-width: 100%">
 			</div>
 		</div>
+		<hr />
+<!--		所有文件-->
+		<table class="layui-hide" id="demo" lay-filter="test"></table>
+		<!-- 更新用户弹出层 -->
+		<div id="view-file-layer" style="display: none; padding: 20px">
+			<form id="view-file-form" class="layui-form layui-form-pane" lay-filter="view-file-form">
+				<div class="layui-form-item">
+					<label class="layui-form-label">文件名</label>
+					<div class="layui-input-block">
+						<input type="text" name="fileName" class="layui-input" lay-verify="required" autocomplete="off" >
+					</div>
+				</div>
+				<div class="layui-form-item">
+					<label class="layui-form-label">上传者</label>
+					<div class="layui-input-block">
+						<input type="text" name="upper" class="layui-input" lay-verify="required" autocomplete="off" readonly>
+					</div>
+				</div>
+<!--				<div class="layui-form-item">-->
+<!--					<div class="layui-input-block">-->
+<!--						<button class="layui-btn" lay-submit lay-filter="update-user-form-submit">提交</button>-->
+<!--						<button type="reset" class="layui-btn layui-btn-primary">重置</button>-->
+<!--					</div>-->
+<!--				</div>-->
+			</form>
+		</div>
+<!--		文件信息的弹窗-->
 
-		<br />
-		<table class="layui-table" lay-data="{height:315, url:'/teacher/upFiles', page:true, id:'test'}" lay-filter="test">
-			<thead>
-			<tr>
-				<th lay-data="{field:'id', width:80, sort: true}">文件名</th>
-				<th lay-data="{field:'username', width:80}">上传者</th>
-
-			</tr>
-			</thead>
-		</table>
 		<!--内容结束 -->
     </div>
 	<script src="layui.js"></script>
 	<!-- script -->
 	<script>
-		layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
+		layui.use(['jquery','laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function(){
 			var laydate = layui.laydate //日期
 					,laypage = layui.laypage //分页
 					,layer = layui.layer //弹层
@@ -47,15 +69,90 @@
 					,upload = layui.upload //上传
 					,element = layui.element //元素操作
 					,slider = layui.slider //滑块
+					,$ = layui.$
+					,jquery = layui.jquery
+					,form = layui.form;
 			//上传
 			upload.render({
 				elem: '#uploadDemo'
 				,url: '/teacher/upFiles' //改成您自己的上传接口
 				,accept: 'file'
+				,choose: function (obj) {
+					var file = obj.pushFile();
+					console.log(file)
+				}
 				,done: function(res){
 					layer.msg('上传成功');
-					layui.$('#uploadDemoView').removeClass('layui-hide').find('img').attr('src', res.files.file);
-					console.log(res)
+
+				}
+			});
+			table.render({
+				elem: '#demo'
+				,height: 420
+				,url: '/teacher/viewFiles' //数据接口
+				,title: '上传的文件'
+				,shade: '0.0'
+				,cols: [
+						[ //表头
+					{field: 'fileName', title: '文件名', width:100, fixed: 'left'}
+					,{field: 'upper', title: '上传者', width:80}
+					,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+				]
+				]
+				//用于表格重载
+				,id: 'user-tbl'
+			});
+			//监听行工具事件
+			table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+				var data = obj.data //获得当前行数据
+						,layEvent = obj.event; //获得 lay-event 对应的值
+				if(layEvent === 'detail'){
+
+					//每次显示文件信息的表单自动为表单填写该行数据
+					form.val('view-file-form',{
+						"fileName": data.fileName,
+						"upper": data.upper
+					});
+					//显示查看文件信息的弹出层
+					layer.open({
+						type: 1,
+						title: '查看文件信息',
+						skin: 'layui-layer-molv',
+						area: ['500px'],
+						shade: 0.0,
+						content: $('#view-file-layer')
+					});
+
+				} else if(layEvent === 'del'){
+					layer.confirm('真的删除行么', function(index){
+
+						obj.del(); //删除对应行（tr）的DOM结构
+
+						//向服务端发送删除指令
+						layer.confirm('确定删除该文件吗？', function(index) {
+							// ajax方式删除用户
+							$.ajax({
+								url: '/teacher/file/' + data.fileName,
+								type: "POST",
+								dataType: 'json',
+								success: function(data) {
+									if (data.status == 1) {
+										layer.msg('删除成功');
+										table.reload('user-tbl');
+									} else {
+										layer.msg('删除失败');
+									}
+								},
+								error: function() {
+									layer.msg(data.fileName);
+									console.log("ajax error");
+								}
+							});
+							layer.close(index);
+						});
+					});
+				} else if(layEvent === 'edit'){
+					layer.msg('编辑操作');
 				}
 			});
 

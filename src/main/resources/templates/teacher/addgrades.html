@@ -46,9 +46,9 @@
 		<script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
 		<script src="layui.js"></script>
 		<script type="text/html" id="barDemo">
-			<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+
 			<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
-			<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
 		</script>
 
 		<script>
@@ -75,15 +75,14 @@
 					,height: 420
 					,url: '/teacher/viewgrades' //数据接口
 					,title: '用户表'
-					,page: true //开启分页
-					,toolbar: 'default' //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
-					,totalRow: true //开启合计行
+					,toolbar: true  //开启工具栏，此处显示默认图标，可以自定义模板，详见文档
+
 					,cols: [
 							[ //表头
 						{field: 'courseId', title: '课程号', width:80, sort: true, fixed: 'left'}
 						,{field: 'id', title: '学号', width:80, sort: true}
 						,{field: 'username', title: '姓名', width:80}
-						,{field: 'course', title: '课程名字', width: 90, sort: true, totalRow: true}
+						,{field: 'course', title: '课程名字', width: 90}
 						,{field: 'grade', title: '成绩', width:80, sort: true}
 						,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
 					]
@@ -106,7 +105,6 @@
 
 						form.val('update-user-form', {
 							"id": data.id ,
-
 							"courseId": data.courseId
 						});
 						layer.open({

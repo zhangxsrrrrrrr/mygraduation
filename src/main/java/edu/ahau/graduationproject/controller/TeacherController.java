@@ -1,41 +1,40 @@
 package edu.ahau.graduationproject.controller;
 
-import com.alibaba.excel.ExcelReader;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.annotation.ResponseJSONP;
-import com.sun.javafx.collections.MappingChange;
 import edu.ahau.graduationproject.domain.Teacher;
 import edu.ahau.graduationproject.dto.AllStudentGradesDTO;
 import edu.ahau.graduationproject.dto.CourseOfTeacherDTO;
+import edu.ahau.graduationproject.dto.FileName;
+import edu.ahau.graduationproject.dto.StuInforExcelDTO;
 import edu.ahau.graduationproject.mapper.ImportFileMapper;
 import edu.ahau.graduationproject.mapper.TeacherMapper;
 import edu.ahau.graduationproject.utils.ExcelUtil;
+import edu.ahau.graduationproject.utils.FileUtil;
 import edu.ahau.graduationproject.utils.IDUtil;
+import edu.ahau.graduationproject.vo.FileInfor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.velocity.runtime.directive.Foreach;
+import org.apache.tomcat.jni.FileInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
-import org.springframework.jdbc.object.UpdatableSqlQuery;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Created on 2021/2/6.
@@ -52,6 +51,8 @@ public class TeacherController {
 
     @Autowired
     private ImportFileMapper fileMapper;
+
+
 
     @GetMapping("/addgrades")
     public String jumpToHtml() {
@@ -200,7 +201,23 @@ public class TeacherController {
         }
         return map;
     }
-
+    @PostMapping("/addSingleStudent")
+    public String addSingleStudent(StuInforExcelDTO student,
+                                   Model model,
+                                   HttpServletRequest request){
+        List<String> ids = teacherMapper.selectCourseIDById(IDUtil.getID(request));
+        if (!ids.contains(student.getCourseId())){
+            model.addAttribute("msg","课程号不正确");
+        }else {
+            ArrayList<StuInforExcelDTO> list = new ArrayList<>();
+            list.add(student);
+            fileMapper.save(list);
+            fileMapper.saveGrades(list);
+            fileMapper.saveCourseToStudent(list);
+            model.addAttribute("msg", "添加成功");
+        }
+        return "teacher/addStudent" ;
+    }
     @GetMapping("/add")
     public String add(){
         return "teacher/addStudent";
@@ -249,8 +266,12 @@ public class TeacherController {
     }
 
     @ResponseBody
-    @GetMapping("/upFiles")
+    @PostMapping("/upFiles")
     public Object upFiles(HttpServletRequest request){
+        //个人的专属文件
+        String personalFloadPath = "G:/graduation/" + IDUtil.getID(request)+ "/";
+        File  personalFload = new File(personalFloadPath);
+
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         HashMap<String, Object> map = new HashMap<>();
         String pathString = null;
@@ -261,15 +282,14 @@ public class TeacherController {
         //获取上传文件
         MultipartFile multipartFile = multipartRequest.getFile("file");
         //获取文件上传名
+        assert multipartFile != null;
         String originalFilename = multipartFile.getOriginalFilename();
         pathString = "G:/graduation/" + IDUtil.getID(request)+ "/" +IDUtil.getID(request) +
                      new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) +
                      "_" + originalFilename;
         File file = new File(pathString);
 
-        //个人的专属文件
-        String personalFloadPath = "G:/graduation/" + IDUtil.getID(request)+ "/";
-        File  personalFload = new File(personalFloadPath);
+
         if (!personalFload.exists()){
             boolean mkdirs = personalFload.mkdirs();
         }
@@ -281,4 +301,39 @@ public class TeacherController {
         return JSONObject.parse(JSON.toJSONString(map));
     }
 
+    @ResponseBody
+    @PostMapping(value = "/file/{fileName}")
+    public Map<String, String> deleteFile(@PathVariable("fileName") String fileName,
+                                          HttpServletRequest request) throws UnsupportedEncodingException {
+        HashMap<String, String> map = new HashMap<>();
+//        String fileName1 = fileName.getFileName();
+//        fileName = URLDecoder.decode(fileName,"utf-8");
+        boolean isDelete = FileUtil.deleteFile(request,fileName);
+        log.info("{}",isDelete);
+        if (isDelete){
+            map.put("status","1");
+        }else {
+            map.put("status","0");
+
+        }
+        return map;
+    }
+
+    @ResponseBody
+    @GetMapping("/viewFiles")
+    public Object viewFiles(HttpServletRequest request){
+        String id = IDUtil.getID(request);
+        List<FileInfor> fileInfors = new ArrayList<>();
+        List<String> files = FileUtil.findFiles(id);
+        for (String filename: files
+             ) {
+           fileInfors.add(new FileInfor(filename,id));
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("code",0);
+        map.put("msg","");
+        map.put("data",fileInfors);
+
+        return  JSONObject.parse(JSON.toJSONString(map));
+    }
 }

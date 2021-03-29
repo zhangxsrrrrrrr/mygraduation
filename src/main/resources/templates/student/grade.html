@@ -6,16 +6,16 @@
 <body class="layui-layout-body">
 
 <div class="layui-layout layui-layout-admin">
-	<div th:replace="body::#header"></div>
+	<div th:replace="body1::#header"></div>
 
-	<div th:replace="body::#side"></div>
+	<div th:replace="body1::#side"></div>
 
-	<div th:insert="body::#script"></div>
+	<div th:insert="body1::#script"></div>
 
 
 
     <div class="layui-body" id="body">
-		<a th:href="@{/student/getGrade}" href="http://www.layui.com" class="layui-btn">一个可跳转的按钮</a>
+
        <!--主题内容开始-->
 		    <table id="test" class="layui-table" lay-data="{height:315, url:'/student/getGrade/', page:true, id:'test'}" lay-filter="test">
 		      <thead>
@@ -34,7 +34,7 @@
 		    </table>
 		                  
 		              
-		    <script src="layui.js" charset="utf-8"></script>
+
 		    <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 		     
 		    <script>
@@ -43,7 +43,7 @@
 		      
 		      table.render({
 		        elem: '#test'
-		        ,url:'/student/viewgrades/'
+		        ,url:'/student/getGrade'
 		        ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
 		        ,cols: [
 					  [

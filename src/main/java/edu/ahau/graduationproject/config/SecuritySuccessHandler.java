@@ -24,10 +24,10 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
             for (GrantedAuthority g:
                  authorities) {
                 if ("ROLE_student".equals(g.getAuthority())){
-                    response.sendRedirect("/student/information");
+                    response.sendRedirect("/all/home");
                 }
                 if ("ROLE_teacher".equals(g.getAuthority())){
-                    response.sendRedirect("/teacher/information");
+                    response.sendRedirect("/all/home");
                 }
             }
         }

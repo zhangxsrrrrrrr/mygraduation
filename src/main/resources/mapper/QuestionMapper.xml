@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahau.graduationproject.mapper.QuestionMapper">
+
+    <insert id="insertQuestion">
+        insert into question(file_name, userId, creationDate,text_area) VALUE
+
+            (#{question.fileName},#{question.userId},#{question.creationDate},#{question.textArea})
+    </insert>
+    <select id="selectQuestionImage" resultType="java.lang.String">
+        select file_name from question where question_id = #{questionId}
+    </select>
+    <select id="selectQuestionText" resultType="java.lang.String">
+        select text_area from question where question_id = #{questionId}
+    </select>
+    <select id="selectQuestionUpper" resultType="java.lang.String">
+        select userId from question where question_id = #{questionId}
+    </select>
+    <select id="selectQuestionid" resultType="java.lang.Integer">
+        select question_id from question where creationDate=#{date}
+    </select>
+    <select id="selectStudentName" resultType="java.lang.String">
+        select stu_name
+        from stu_infor where stu_id=#{id};
+    </select>
+    <select id="selectTeachertName" resultType="java.lang.String">
+        select tch_name from tch_infor where tch_id=#{id}
+    </select>
+    <select id="findAllQuestionIds" resultType="java.lang.Integer">
+        select question_id
+        from question;
+    </select>
+
+
+</mapper>

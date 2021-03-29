@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style type="text/css">
+        #image{
+            max-height: 90px;
+            max-width: 90px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>论坛首页</title>
+    <link th:include="allbody.html::head">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:insert="allbody.html::#header"></div>
+    <div th:insert="allbody.html::#side"></div>
+    <div th:insert="allbody.html::#script"></div>
+<div class="layui-body">
+    <div th:each="answer,stats:${answers}">
+    <div style="padding: 20px; background-color: #F2F2F2;" >
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <label></label>
+                <div class="layui-card-header" th:text="'id：'+${answer.getUserNameAndId()}">标题</div>
+                <div class="layui-card-body">
+                    <span th:text="${answer.getQuestionText()}"></span>
+                    <div th:each="image,stats:${answer.getQuestionImage()}">
+                        <a th:href="@{${image}}">
+                        <img th:src="${image}" id="image">
+                        </a>
+                    </div>
+                    <a th:href="@{/all/answer(text=${answer.getQuestionText()},nameid=${answer.userNameAndId},id=${answer.id})}" class="layui-btn layui-btn-xs">评论</a>
+                    <hr>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+</div>
+
+
+</body>
+</html>

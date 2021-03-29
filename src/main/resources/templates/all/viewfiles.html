@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>论坛首页</title>
+    <link th:include="allbody.html::head">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:insert="allbody.html::#header"></div>
+    <div th:insert="allbody.html::#side"></div>
+    <div th:insert="allbody.html::#script"></div>
+<div class="layui-body">
+    <form class="layui-form" action="/all/selectfile" method="post">
+        <span class="layui-col-space4"></span>
+        <div class="layui-form-item">
+            <div class="layui-input-block layui-col-md2">
+                <input type="text" name="id" required  lay-verify="required" placeholder="请输入老师工号" autocomplete="off" class="layui-input">
+            </div>
+            <label class="layui-form-label">
+                <button class="layui-btn" lay-submit lay-filter="formDemo">搜索</button>
+            </label>
+            <label class="layui-form-label">
+                <a class="layui-btn" th:href="@{/all/restSession}">重置</a>
+            </label>
+
+        </div>
+    </form>
+
+
+
+    <table class="layui-hide" id="test" lay-filter="test"></table>
+    <script type="text/html" id="barDemo">
+
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">下载</a>
+    </script>
+    <script>
+        layui.use('table', function(){
+            var table = layui.table,
+                $ = layui.$;
+
+            table.render({
+                elem: '#test'
+                ,url:'/all/file'
+                ,title: '用户数据表'
+                ,method: 'get'
+                ,cols: [
+                    [
+                    {field:'fileName', title:'文件名', width:240, fixed: 'left'}
+                    ,{field:'upper', title:'上传者', width:120, edit: 'text', sort: true}
+                    ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:150}
+                ]
+                ]
+                ,id: 'user-tbl'
+            });
+
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                //console.log(obj)
+                if(obj.event === 'del'){
+                    layer.confirm('确定下载吗？', function(index) {
+                        // ajax方式删除用户
+                        $.ajax({
+                            url: '/all/down?'+'upper='+data.upper+'&'+'fileName='+data.fileName,
+                            type: "get",
+                            dataType: 'json',
+                            success: function(data) {
+                                if (data.status == 1) {
+                                    layer.msg('下载成功');
+                                    table.reload('user-tbl');
+                                } else {
+                                    layer.msg('下载失败');
+                                }
+                            },
+                            error: function() {
+                                console.log("ajax error");
+                            }
+                        });
+                        layer.close(index);
+                    });
+                } else if(obj.event === 'edit'){
+                    layer.prompt({
+                        formType: 2
+                        ,value: data.email
+                    }, function(value, index){
+                        obj.update({
+                            email: value
+                        });
+                        layer.close(index);
+                    });
+                }
+            });
+        });
+    </script>
+</div>
+</div>
+
+</body>
+</html>

@@ -7,23 +7,30 @@ import com.alibaba.excel.ExcelReader;
 import com.alibaba.excel.read.metadata.ReadSheet;
 import com.alibaba.fastjson.JSON;
 import edu.ahau.graduationproject.config.StudentDataListener;
+import edu.ahau.graduationproject.domain.Question;
 import edu.ahau.graduationproject.domain.Student;
 import edu.ahau.graduationproject.dto.*;
-import edu.ahau.graduationproject.mapper.ImportFileMapper;
-import edu.ahau.graduationproject.mapper.StudentMapper;
-import edu.ahau.graduationproject.mapper.TeacherMapper;
-import edu.ahau.graduationproject.mapper.UserMapper;
+import edu.ahau.graduationproject.mapper.*;
+import edu.ahau.graduationproject.service.AnswerService;
+import edu.ahau.graduationproject.utils.FileUtil;
 import edu.ahau.graduationproject.utils.IDUtil;
+import jdk.management.resource.internal.inst.SocketOutputStreamRMHooks;
 import org.apache.velocity.runtime.directive.Foreach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @SpringBootTest
 class GraduationprojectApplicationTests {
     @Autowired
@@ -106,5 +113,76 @@ class GraduationprojectApplicationTests {
             boolean mkdirs = personalFload.mkdirs();
         }
     }
+    @Test
+    public void testFile1(){
+        List<String> files = FileUtil.findFiles("30010");
+        System.out.println(files.size());
+    }
+    @Test
+    public void deleteFile(){
+        File file = new File("G:/graduation/" + "30010" + "/" + "密码.txt");
+        file.delete();
 
+
+    }
+    @Test
+    public void date1() throws ParseException {
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+        Calendar calendar = Calendar.getInstance();
+        String dateName = format.format(calendar.getTime());
+        Date parse = format.parse(dateName);
+
+        System.out.println(parse);
+    }
+    @Autowired
+    private QuestionMapper questionMapper;
+    @Test
+    public void insertDate() throws ParseException {
+        Question question = new Question();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+        Calendar calendar = Calendar.getInstance();
+        String dateName = format.format(calendar.getTime());
+        Date parse = new Date();
+        question.setCreationDate(parse);
+        boolean b = questionMapper.insertQuestion(question);
+        System.out.println(b);
+    }
+    @Test
+    public void file(){
+        String path = "G:\\graduation";
+        File file = new File(path);
+        File[] files = file.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            System.out.println("path:"+files[i].getAbsolutePath());
+            System.out.println("name:"+files[i].getName());
+            for (File file2:files[0].listFiles()
+                 ) {
+                System.out.println(file2.getName());
+            }
+
+        }
+    }
+    @Test
+    public void systemView(){
+        FileSystemView fsv = FileSystemView.getFileSystemView();
+        System.out.println(fsv.getHomeDirectory().getAbsolutePath());
+    }
+    @Autowired
+    private AnswerService answerService;
+    @Test
+    public void questionTest(){
+//        List<File> questionImage = answerService.findQuestionImage(17);
+//        System.out.println(questionImage.toString());
+        List<Integer> allQuestionIds = questionMapper.findAllQuestionIds();
+        System.out.println(allQuestionIds);
+    }
+
+    @Test
+    public void mapperTest(){
+        System.out.println(answerService.findAnserId(1));
+        String answerImage = answerService.findAnswerImage(1);
+        System.out.println(answerImage);
+
+    }
 }

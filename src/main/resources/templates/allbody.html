@@ -1,21 +1,22 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
       xmlns="http://www.w3.org/1999/xhtml">
 <head th:fragment="head">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>学生后台信息</title>
-    <link rel="stylesheet" href="css/layui.css">
+    <title>首页</title>
+    <link rel="stylesheet" href="/teacher/css/layui.css">
 </head>
 <body class="layui-layout-body">
 
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header" id="header">
-        <div class="layui-logo">个人信息</div>
+        <div class="layui-logo">首页</div>
         <!-- 头部区域（可配合layui已有的水平导航） -->
         <ul class="layui-nav layui-layout-left" >
             <li class="layui-nav-item"><a th:href="@{/all/homePage}" href="">首页</a></li>
+
 
         </ul>
         <ul class="layui-nav layui-layout-right">
@@ -25,12 +26,14 @@
                     <span sec:authentication="principal.username"></span>
                 </a>
                 <dl class="layui-nav-child">
-                    <dd><a th:href="@{/student/information}" href="">基本资料</a></dd>
-
+                    <dd><a th:href="@{/all/basic}" href="">基本资料</a></dd>
+                    <dd><a href="">安全设置</a></dd>
                 </dl>
             </li>
             <li class="layui-nav-item"><a th:href="@{/logout}" href="">退了</a></li>
         </ul>
+
+
     </div>
 
     <div class="layui-side layui-bg-black" id="side">
@@ -38,50 +41,31 @@
             <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
             <ul class="layui-nav layui-nav-tree"  lay-filter="test">
                 <li class="layui-nav-item layui-nav-itemed">
-                    <a class="" href="javascript:;">个人中心</a>
+                    <a class="" href="javascript:;">问题中心</a>
                     <dl class="layui-nav-child">
-                        <dd><a th:href="@{/student/information}" href="javascript:;">个人信息</a></dd>
-                        <dd><a th:href="@{/student/bind}" href="javascript:;">账号绑定</a></dd>
-                        <dd><a th:href="@{/student/password}" href="javascript:;">密码修改</a></dd>
+                        <dd><a th:href="@{/all/raiseQuestion}" href="javascript:;">提出问题</a></dd>
+                        <dd><a th:href="@{/all/viewquestion}" href="javascript:;">查看问题</a></dd>
+                        <dd><a th:href="@{/all/viewFiles}" href="javascript:;">查看资源</a></dd>
 
                     </dl>
                 </li>
-
-                <li class="layui-nav-item">
-                    <a href="javascript:;">学业</a>
-                    <dl class="layui-nav-child">
-                        <dd><a th:href="@{/student/teacherinfor}" href="javascript:;">老师信息</a></dd>
-                        <dd><a th:href="@{/student/grade}" href="javascript:;">课程信息</a></dd>
-                        <dd><a href="javascript:;">教务系统</a></dd>
-                    </dl>
-
-                </li>
-
-                <li class="layui-nav-item"><a th:href="@{/student/myproblem}" href="">我的问题</a></li>
             </ul>
         </div>
     </div>
-
-    <div class="layui-body" id="body">
-        <!-- 内容主体区域 -->
-		
-		<!--内容结束 -->
-    </div>
-
-    <div class="layui-footer">        <!-- 底部固定区域 -->
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
         © 张汛的毕业设计作品 2021.2
     </div>
 </div>
 <div id="script">
-    <script src="layui.js"></script>
+    <script src="/teacher/layui.js"></script>
     <script>
-        //JavaScript代码区域 BODY1
+        //JavaScript代码区域
         layui.use('element', function(){
             var element = layui.element;
 
         });
     </script>
-
 </div>
 </body>
 </html>

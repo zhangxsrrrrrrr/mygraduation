@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <style type="text/css">
+        #image{
+            max-height: 90px;
+            max-width: 90px;
+        }
+        #image1{
+            max-height: 90px;
+            max-width: 90px;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>论坛首页</title>
+    <link th:include="allbody.html::head">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:insert="allbody.html::#header"></div>
+    <div th:insert="allbody.html::#side"></div>
+    <div th:insert="allbody.html::#script"></div>
+
+<div class="layui-body">
+
+    <div style="padding: 20px; background-color: #F2F2F2;" >
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <label>名字：</label>
+                <div class="layui-card-header" th:text="${ques.userNameAndId}">标题</div>
+                <div class="layui-card-body">
+                    <span th:text="${ques.questionText}"></span>
+                    <div th:each="image,stats:${ques.getQuestionImage()}">
+                        <a th:href="@{${image}}">
+                        <img th:src="${image}" id="image">
+                        </a>
+                    </div>
+<!--                    <a th:href="@{/all/answer(text=${answer.getQuestionText()},nameid=${answer.userNameAndId},id=${answer.id})}" class="layui-btn layui-btn-xs">评论</a>-->
+                    <hr>
+                    <form class="layui-form" method="post" action="/all/raiseanswer" enctype="multipart/form-data">
+                    <div class="layui-form-item layui-form-text">
+                        <div class="layui-input-block">
+                            <textarea placeholder="请输入内容" name="text" class="layui-textarea"></textarea>
+                            <input name="photo" type="file">
+                            <input name="id" type="hidden" th:value="${ques.id}" >
+                            <input name="upper" type="hidden" th:value="${ques.userNameAndId}">
+                        </div>
+                        <label class="layui-form-label">
+                            <button type="submit" class="layui-btn layui-btn-primary layui-btn-sm" lay-submit="" lay-filter="demo1">评论</button>
+                        </label>
+                    </div>
+                    </form>
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                        <legend>评论区</legend>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:each="answer:${answers}">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header" th:text="${answer.userNameAndId}">标题</div>
+                <div class="layui-card-body" th:text="${answer.answerText}"></div>
+                <a th:href="@{${answer.answerImage}}">
+                <img id="image1" th:src="${answer.answerImage}" th:if="${answer.answerImage} ne null">
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+
+</body>
+</html>

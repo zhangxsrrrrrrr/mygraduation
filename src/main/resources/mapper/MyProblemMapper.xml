@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahau.graduationproject.mapper.MyProblemMapper">
+    <select id="selectQuestionIds" resultType="java.lang.Integer">
+        select question_id from question
+    </select>
+    <select id="selectQuestions" resultType="edu.ahau.graduationproject.domain.Question">
+        select * from question
+    </select>
+    <select id="selectAnswers" resultType="edu.ahau.graduationproject.domain.Answer">
+        select * from answer
+    </select>
+</mapper>

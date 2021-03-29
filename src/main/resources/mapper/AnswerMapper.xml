@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahau.graduationproject.mapper.AnswerMapper">
+    <insert id="insertAnswerText">
+        insert into answer(question_id, textarea, photoname, answertime, userId, userName) values (#{answer.questionId},#{answer.textArea},#{answer.photoName}
+                                    ,#{answer.answerTime},#{answer.userId},#{answer.userName})
+    </insert>
+    <select id="selectName" resultType="java.lang.String">
+        select  userName
+        from answer where answer_Id=#{id};
+    </select>
+    <select id="selectId" resultType="java.lang.String">
+        select distinct userId from answer
+    </select>
+    <select id="selectAnswerText" resultType="java.lang.String">
+        select textarea from answer where answer_Id=#{id}
+    </select>
+    <select id="selectAnswerImage" resultType="java.lang.String">
+        select photoname from answer where answer_Id=#{id}
+    </select>
+    <select id="selectaLLAnswerId" resultType="java.lang.Integer">
+        Select answer_Id from answer
+    </select>
+    <select id="selectAnswerId" resultType="java.lang.Integer">
+        select answer_Id from answer where answertime=#{cdate}
+    </select>
+
+
+</mapper>

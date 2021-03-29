@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4"
+      xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>论坛首页</title>
+    <link th:include="allbody::head">
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:insert="allbody::#header"></div>
+    <div th:insert="allbody::#side"></div>
+    <div th:insert="allbody::#script"></div>
+<div class="layui-body">
+        <h1>规章制度：</h1>
+</div>
+</div>
+</body>
+</html>

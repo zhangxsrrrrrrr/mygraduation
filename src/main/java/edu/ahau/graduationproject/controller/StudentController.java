@@ -6,11 +6,15 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.annotation.ResponseJSONP;
 import com.sun.org.apache.bcel.internal.generic.NEW;
+import com.sun.org.apache.bcel.internal.generic.VariableLengthInstruction;
 import com.sun.org.apache.regexp.internal.RE;
+import edu.ahau.graduationproject.domain.Answer;
+import edu.ahau.graduationproject.domain.Question;
 import edu.ahau.graduationproject.domain.Student;
-import edu.ahau.graduationproject.dto.StudentGradesDTO;
-import edu.ahau.graduationproject.dto.TeacherOfStudentInforDTO;
+import edu.ahau.graduationproject.dto.*;
 import edu.ahau.graduationproject.mapper.StudentMapper;
+import edu.ahau.graduationproject.service.AnswerService;
+import edu.ahau.graduationproject.service.QuestionsOfStudent;
 import edu.ahau.graduationproject.utils.IDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +28,11 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created on 2021/2/4.
@@ -40,6 +47,11 @@ public class StudentController {
     @Autowired
     private StudentMapper studentMapper;
 
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private QuestionsOfStudent questionsOfStudent;
 
     @ResponseBody
     @GetMapping("/test")
@@ -109,7 +121,7 @@ public class StudentController {
     //跳转到grade页面
     @GetMapping("/grade")
     public String grade(){
-        return "student/grade";
+        return "/student/grade";
     }
 
     //修改密码
@@ -151,5 +163,53 @@ public class StudentController {
         Object parse = JSONObject.parse(JSON.toJSONString(map));
         log.info("老师信息{}",parse);
         return parse;
+    }
+
+    @GetMapping("/myproblem")
+    public String viewMyProblem(HttpServletRequest request,Model model){
+        List<Question> questions = questionsOfStudent.viewQuestions();
+        List<OwnQuestionAndAnswer> viewQuestions = new ArrayList<>();
+        String id = IDUtil.getID(request);
+        Student student = studentMapper.selectStudentByID(id);
+        String viewName = id+"-"+student.getStuName();
+        Iterator<Question> iterator = questions.iterator();
+        List<String> images = new ArrayList<>();
+        while (iterator.hasNext()){
+            Question question = iterator.next();
+            String imagePath = question.getFileName();
+            String[] files = imagePath.split("@");
+            String webPrefix = "/files/"+id+"/"+question.getQuestionId()+"/";
+            for (int i = 0; i < files.length; i++) {
+                String path = webPrefix+files[i];
+                images.add(path);
+            }
+            //问题
+            AnswerDTO answerDTO = new AnswerDTO();
+            answerDTO.setUserNameAndId(viewName);
+            answerDTO.setQuestionImage(images);
+            answerDTO.setQuestionText(question.getTextArea());
+            //回复
+            ArrayList<Answer1> answersList = new ArrayList<>();
+            int questionId = question.getQuestionId();
+            List<Answer> answers = questionsOfStudent.viewAnswers(question.getQuestionId());
+            for (Answer answer:
+            answers) {
+                String photoName = answer.getPhotoName().replace("G:/graduationQuestion/", "/files/");
+                Answer1 answer1 = new Answer1();
+                answer1.setAnswerImage(photoName);
+                answer1.setAnswerText(answer.getTextArea());
+                String name = answer.getUserId() + answer.getUserName();
+                answer1.setUserNameAndId(name);
+                answersList.add(answer1);
+            }
+
+
+            OwnQuestionAndAnswer ownQuestionAndAnswer = new OwnQuestionAndAnswer();
+            ownQuestionAndAnswer.setQuestion(answerDTO);
+            ownQuestionAndAnswer.setAnswer(answersList);
+            viewQuestions.add(ownQuestionAndAnswer);
+        }
+        model.addAttribute("questions",viewQuestions);
+        return "student/myproblem";
     }
 }

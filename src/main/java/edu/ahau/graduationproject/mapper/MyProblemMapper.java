@@ -14,6 +14,6 @@ import java.util.List;
 @Repository
 public interface MyProblemMapper {
     List<Integer> selectQuestionIds(String id);
-    List<Question> selectQuestions();
+    List<Question> selectQuestions(String id);
     List<Answer> selectAnswers(int id);
 }

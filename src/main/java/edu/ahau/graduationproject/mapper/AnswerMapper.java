@@ -37,7 +37,7 @@ public interface AnswerMapper {
     /**
      * 一个问题下的所有回答id
      */
-    List<Integer> selectaLLAnswerId();
+    List<Integer> selectaLLAnswerId(@Param("id") Integer id);
 
     /**
      * 插入评论信息
@@ -48,4 +48,11 @@ public interface AnswerMapper {
      * 根据上传日期获取answerId
      */
     Integer selectAnswerId(Date date);
+
+    /**
+    * @author: zhangxun_a
+    * @date: 2021/4/21 11:42
+    * @Description: 获取questionid
+    */
+    Integer selectQuestionId(@Param("id") Integer id);
 }

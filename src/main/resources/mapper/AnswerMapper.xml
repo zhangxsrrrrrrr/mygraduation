@@ -10,7 +10,7 @@
         from answer where answer_Id=#{id};
     </select>
     <select id="selectId" resultType="java.lang.String">
-        select distinct userId from answer
+        select distinct userId from answer where answer_Id=#{id}
     </select>
     <select id="selectAnswerText" resultType="java.lang.String">
         select textarea from answer where answer_Id=#{id}
@@ -19,10 +19,13 @@
         select photoname from answer where answer_Id=#{id}
     </select>
     <select id="selectaLLAnswerId" resultType="java.lang.Integer">
-        Select answer_Id from answer
+        Select answer_Id from answer where question_id=#{id}
     </select>
     <select id="selectAnswerId" resultType="java.lang.Integer">
         select answer_Id from answer where answertime=#{cdate}
+    </select>
+    <select id="selectQuestionId" resultType="java.lang.Integer">
+        select question_id from answer where answer_Id=#{id}
     </select>
 
 

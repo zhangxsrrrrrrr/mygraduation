@@ -20,8 +20,8 @@ public class QuestionOfStudentImpl implements QuestionsOfStudent {
     @Autowired
     private MyProblemMapper myProblemMapper;
     @Override
-    public List<Question> viewQuestions() {
-        List<Question> questions = myProblemMapper.selectQuestions();
+    public List<Question> viewQuestions(String userID) {
+        List<Question> questions = myProblemMapper.selectQuestions(userID);
         return questions;
     }
 

@@ -167,21 +167,26 @@ public class StudentController {
 
     @GetMapping("/myproblem")
     public String viewMyProblem(HttpServletRequest request,Model model){
-        List<Question> questions = questionsOfStudent.viewQuestions();
-        List<OwnQuestionAndAnswer> viewQuestions = new ArrayList<>();
         String id = IDUtil.getID(request);
+        List<Question> questions = questionsOfStudent.viewQuestions(id);
+        List<OwnQuestionAndAnswer> viewQuestions = new ArrayList<>();
+
         Student student = studentMapper.selectStudentByID(id);
         String viewName = id+"-"+student.getStuName();
         Iterator<Question> iterator = questions.iterator();
-        List<String> images = new ArrayList<>();
+
         while (iterator.hasNext()){
+            List<String> images = new ArrayList<>();
             Question question = iterator.next();
             String imagePath = question.getFileName();
             String[] files = imagePath.split("@");
-            String webPrefix = "/files/"+id+"/"+question.getQuestionId()+"/";
-            for (int i = 0; i < files.length; i++) {
-                String path = webPrefix+files[i];
-                images.add(path);
+            if (files.length != 0) {
+                String webPrefix = "/files/"+id+"/"+question.getQuestionId()+"/";
+
+                for (int i = 0; i < files.length; i++) {
+                    String path = webPrefix + files[i];
+                    images.add(path);
+                }
             }
             //问题
             AnswerDTO answerDTO = new AnswerDTO();
@@ -196,7 +201,9 @@ public class StudentController {
             answers) {
                 String photoName = answer.getPhotoName().replace("G:/graduationQuestion/", "/files/");
                 Answer1 answer1 = new Answer1();
-                answer1.setAnswerImage(photoName);
+                if (photoName.endsWith(".jpg")) {
+                    answer1.setAnswerImage(photoName);
+                }
                 answer1.setAnswerText(answer.getTextArea());
                 String name = answer.getUserId() + answer.getUserName();
                 answer1.setUserNameAndId(name);

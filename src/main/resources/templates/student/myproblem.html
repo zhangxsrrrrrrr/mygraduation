@@ -34,8 +34,8 @@
                             <span th:text="${question.question.questionText}"></span>
                             <div th:each="image,stats:${question.question.questionImage}">
                                 <div class="layui-col-md3">
-                                    <a th:href="@{${image}}">
-                                        <img th:src="${image}" id="image">
+                                    <a th:if="${image}!=null" th:href="@{${image}}">
+                                        <img th:src="${image}" id="image" />
                                     </a>
                                 </div>
                             </div>
@@ -49,7 +49,7 @@
                                         <div class="layui-card-header" th:text="${an.userNameAndId}"></div>
                                         <div class="layui-card-body" th:text="${an.answerText}"></div>
                                         <div class="layui-col-md3">
-                                            <a th:href="@{${an.answerImage}}">
+                                            <a th:if="${an.answerImage}!=null" th:href="@{${an.answerImage}}">
                                                 <img th:src="${an.answerImage}" id="image1">
                                             </a>
                                         </div>

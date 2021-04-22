@@ -13,22 +13,19 @@ import edu.ahau.graduationproject.dto.*;
 import edu.ahau.graduationproject.mapper.*;
 import edu.ahau.graduationproject.service.AnswerService;
 import edu.ahau.graduationproject.utils.FileUtil;
-import edu.ahau.graduationproject.utils.IDUtil;
-import jdk.management.resource.internal.inst.SocketOutputStreamRMHooks;
-import org.apache.velocity.runtime.directive.Foreach;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
 @SpringBootTest

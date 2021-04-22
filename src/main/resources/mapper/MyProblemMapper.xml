@@ -5,9 +5,9 @@
         select question_id from question
     </select>
     <select id="selectQuestions" resultType="edu.ahau.graduationproject.domain.Question">
-        select * from question
+        select * from question where userId=#{id}
     </select>
     <select id="selectAnswers" resultType="edu.ahau.graduationproject.domain.Answer">
-        select * from answer
+        select * from answer where question_id=#{id}
     </select>
 </mapper>

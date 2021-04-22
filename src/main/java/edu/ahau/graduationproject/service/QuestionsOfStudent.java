@@ -12,6 +12,6 @@ import java.util.List;
  * @author Xun Zhang
  */
 public interface QuestionsOfStudent {
-    List<Question> viewQuestions();
+    List<Question> viewQuestions(String userId);
     List<Answer> viewAnswers(int id);
 }

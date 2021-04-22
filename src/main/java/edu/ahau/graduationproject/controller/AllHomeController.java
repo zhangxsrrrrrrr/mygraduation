@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import sun.security.krb5.internal.crypto.Des;
 
 import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
@@ -82,19 +83,19 @@ public class AllHomeController {
         return "all/"+url;
     }
 
-    @ResponseBody
+//    @ResponseBody
     @PostMapping("/raiseque")
-    public Map<String, String> raiseQuestion(HttpServletRequest request,
+    public String raiseQuestion(HttpServletRequest request,
                                              @RequestParam(value = "text") String text,
-                                             @RequestPart("photos") MultipartFile[] files) throws ParseException {
+                                             @RequestPart("photos") MultipartFile[] files) throws ParseException, IOException {
 
         log.info("size:{}",files.length);
         HashMap<String, String> map = new HashMap<>();
         boolean isSave = false;
-        Question question = null;
+        Question question = new Question();
         if (files.length==0&&text.length()==0){
             map.put("msg","不要输入空的问题");
-            return map;
+            return "/all/raisequestion";
         }
         StringBuilder allFileName = new StringBuilder();
         if (files.length!=0){
@@ -141,7 +142,8 @@ public class AllHomeController {
                 String path = pathValue.toString();
                 File file1 = new File(path);
                 if (!file1.getParentFile().exists()) {
-                    file1.getParentFile().mkdirs();
+                    boolean mkdirs = file1.mkdirs();
+                    log.info("------>{}",mkdirs);
                 }
                     try {
 
@@ -153,12 +155,10 @@ public class AllHomeController {
             }
         }
 
-
-
         if (isSave){
             map.put("msg","提问成功");
         }
-        return map;
+        return "/all/raisequestion";
     }
     @ResponseBody
     @GetMapping("/file")
@@ -182,7 +182,12 @@ public class AllHomeController {
                 ) {
                     FileInfor fileInfor = new FileInfor();
                     fileInfor.setFileName(file3.getName());
-                    fileInfor.setUpper(IDUtil.getID(request));
+                    String parent = file3.getParent();
+                    int lastIndexOf = parent.lastIndexOf(File.separator);
+                    String upper = parent.substring(lastIndexOf, parent.length());
+                    String replace = upper.replace("\\", "");
+                    fileInfor.setUpper(replace);
+
                     list.add(fileInfor);
                 }
             }
@@ -218,9 +223,18 @@ public class AllHomeController {
         //需要下载的文件
         File srcFile = new File(path);
         FileSystemView fileSystemView = FileSystemView.getFileSystemView();
-        String dest = fileSystemView.getHomeDirectory().getAbsolutePath()+"\\downFileFromAHAU\\"+infor.getFileName();
+        String[] s = infor.getFileName().split("_");
+
+        String dest = fileSystemView.getHomeDirectory().getAbsolutePath()+"\\downFileFromAHAU\\";
+        StringBuilder des = new StringBuilder();
+        des.append(dest);
+        for (int i = 1; i < s.length; i++) {
+            des.append(s[i]+"_");
+        }
+
+
         log.info("dest{}",dest);
-        File dstFile = new File(dest);
+        File dstFile = new File(des.toString());
         if (!dstFile.getParentFile().exists()){
             dstFile.getParentFile().mkdirs();
         }
@@ -280,22 +294,28 @@ public class AllHomeController {
         return "/all/viewquestion";
     }
     @GetMapping("/answer")
+    // id为questionID
     public String answer(String text,String nameid,Integer id,Model model){
         List<AnswerDTO> questionDTO = new ArrayList<>();
         List<String> images = answerService.findQuestionImage(id);
         AnswerDTO answerDTO = new AnswerDTO(nameid, text, images, id);
         questionDTO.add(answerDTO);
         List<Answer1> answer1s = new ArrayList<>();
-        List<Integer> ids = answerMapper.selectaLLAnswerId();
+        List<Integer> ids = answerMapper.selectaLLAnswerId(id);
 
+        // 根据question_id查询到所有的answerid
         Iterator<Integer> iterator = ids.iterator();
         while (iterator.hasNext()){
             Integer next = iterator.next();
             log.info("{}",next);
             String answerId = answerService.findAnserId(next);
+            log.info("answer ------> {},answerService.findAnserId(next)");
             String answerImage = answerService.findAnswerImage(next);
             String webImage = "/files";
-            String viewImage = answerImage.replace("G:/graduationQuestion",webImage);
+            String viewImage = null;
+            if (answerImage.endsWith(".jpg")) {
+               viewImage = answerImage.replace("G:/graduationQuestion",webImage);
+            }
             String answerText = answerService.findAnswerText(next);
             Answer1 answer1 = new Answer1(answerId, answerText, viewImage, next);
             answer1s.add(answer1);
@@ -319,13 +339,14 @@ public class AllHomeController {
         String pathname = "G:/graduationQuestion/"+upperId+"/"+id+"/answer/"+originalFilename;
         File dest = new File(pathname);
         if (!dest.getParentFile().exists()){
-            dest.getParentFile().mkdir();
+            boolean mkdirs = dest.getParentFile().mkdirs();
+            log.info("123123123123");
         }
         //上传时间
         Date date = new Date();
 
         try {
-            file.transferTo(new File(pathname));
+            file.transferTo(dest);
         } catch (IOException e) {
             e.printStackTrace();
         }

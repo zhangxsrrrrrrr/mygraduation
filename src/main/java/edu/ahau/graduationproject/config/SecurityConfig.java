@@ -52,7 +52,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //首页,根据用户的角色重定向跳转
         http.formLogin().loginPage("/")
                 .loginProcessingUrl("/pwd")
-                .successHandler(new SecuritySuccessHandler());
+                .successHandler(new SecuritySuccessHandler())
+                .failureForwardUrl("/fail");
 //                .defaultSuccessUrl("/student/main");
 
         //设置退出

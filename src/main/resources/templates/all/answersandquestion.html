@@ -64,8 +64,8 @@
             <div class="layui-card">
                 <div class="layui-card-header" th:text="${answer.userNameAndId}">标题</div>
                 <div class="layui-card-body" th:text="${answer.answerText}"></div>
-                <a th:href="@{${answer.answerImage}}">
-                <img id="image1" th:src="${answer.answerImage}" th:if="${answer.answerImage} ne null">
+                <a th:if="${answer.answerImage}!=null" th:href="@{${answer.answerImage}}">
+                <img id="image1" th:src="${answer.answerImage}">
                 </a>
             </div>
         </div>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahau.graduationproject.mapper.QryAnswerAndQuestionNum">
+    <select id="selecteAnswerNum" resultType="java.lang.Long">
+        select count(1) from answer where userId=#{id}
+    </select>
+    <select id="selecteQuestionNum" resultType="java.lang.Long">
+        select count(1) from question where userId=#{id}
+    </select>
+</mapper>

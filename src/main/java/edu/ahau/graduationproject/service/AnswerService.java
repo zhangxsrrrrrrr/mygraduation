@@ -16,4 +16,5 @@ public interface AnswerService {
     String findQuestionText(int questionId);
     String findQuestionUserId(int questionId);
     String findUserName(String id);
+    Integer findFlag(int id);
 }

@@ -27,13 +27,15 @@ public class Answer {
     private Date answerTime;
     private String userId;
     private String userName;
+    private int flag;
 
-    public Answer(Integer questionId, String textArea, String photoName, Date answerTime, String userId, String userName) {
+    public Answer(Integer questionId, String textArea, String photoName, Date answerTime, String userId, String userName,int flag) {
         this.questionId = questionId;
         this.textArea = textArea;
         this.photoName = photoName;
         this.answerTime = answerTime;
         this.userId = userId;
         this.userName = userName;
+        this.flag = flag;
     }
 }

@@ -29,10 +29,10 @@
         <div class="layui-col-md12">
             <div class="layui-card">
                 <label>名字：</label>
-                <div class="layui-card-header" th:text="${ques.userNameAndId}">标题</div>
+                <div class="layui-card-header" th:text="${session.ques.userNameAndId}">标题</div>
                 <div class="layui-card-body">
-                    <span th:text="${ques.questionText}"></span>
-                    <div th:each="image,stats:${ques.getQuestionImage()}">
+                    <span th:text="${session.ques.questionText}"></span>
+                    <div th:each="image,stats:${session.ques.getQuestionImage()}">
                         <a th:href="@{${image}}">
                         <img th:src="${image}" id="image">
                         </a>
@@ -44,8 +44,8 @@
                         <div class="layui-input-block">
                             <textarea placeholder="请输入内容" name="text" class="layui-textarea"></textarea>
                             <input name="photo" type="file">
-                            <input name="id" type="hidden" th:value="${ques.id}" >
-                            <input name="upper" type="hidden" th:value="${ques.userNameAndId}">
+                            <input name="id" type="hidden" th:value="${session.ques.id}" >
+                            <input name="upper" type="hidden" th:value="${session.ques.userNameAndId}">
                         </div>
                         <label class="layui-form-label">
                             <button type="submit" class="layui-btn layui-btn-primary layui-btn-sm" lay-submit="" lay-filter="demo1">评论</button>
@@ -59,13 +59,17 @@
             </div>
         </div>
     </div>
-    <div th:each="answer:${answers}">
+    <div th:each="answer:${session.answers}">
+        <!--添加置顶操作-->
+        <a th:if="${session.topper} eq 'ROLE_teacher'" th:href="@{/all/top(id=${answer.answerId},isTop=true)}" class="layui-icon layui-icon-top" style="font-size: 30px; color: #1E9FFF;"></a>
+
         <div class="layui-col-md12">
             <div class="layui-card">
                 <div class="layui-card-header" th:text="${answer.userNameAndId}">标题</div>
                 <div class="layui-card-body" th:text="${answer.answerText}"></div>
                 <a th:if="${answer.answerImage}!=null" th:href="@{${answer.answerImage}}">
                 <img id="image1" th:src="${answer.answerImage}">
+
                 </a>
             </div>
         </div>

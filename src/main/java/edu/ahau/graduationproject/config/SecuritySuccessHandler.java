@@ -7,6 +7,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -20,13 +21,17 @@ public class SecuritySuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-            Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-            for (GrantedAuthority g:
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        HttpSession session = request.getSession();
+
+        for (GrantedAuthority g:
                  authorities) {
                 if ("ROLE_student".equals(g.getAuthority())){
+                    session.setAttribute("topper",g.getAuthority());
                     response.sendRedirect("/all/home");
                 }
                 if ("ROLE_teacher".equals(g.getAuthority())){
+                    session.setAttribute("topper",g.getAuthority());
                     response.sendRedirect("/all/home");
                 }
             }

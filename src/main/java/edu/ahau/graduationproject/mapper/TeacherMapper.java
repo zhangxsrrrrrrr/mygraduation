@@ -39,5 +39,5 @@ public interface TeacherMapper {
     /**
      * 修改成绩
      */
-    int updateGradesById(@Param("id") String id, @Param("grade") String grade, @Param("courseId") String courseId);
+    int updateGradesById(@Param("id") String id, @Param("grade") String grade, @Param("courseId") String courseId, @Param("classPoint") int classPoint);
 }

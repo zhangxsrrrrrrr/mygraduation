@@ -1,38 +1,29 @@
 package edu.ahau.graduationproject.controller;
 
-import com.sun.org.apache.regexp.internal.RE;
 import edu.ahau.graduationproject.domain.Answer;
 import edu.ahau.graduationproject.domain.Question;
 import edu.ahau.graduationproject.dto.Answer1;
-import edu.ahau.graduationproject.dto.AnswerAndQuestionDTO;
 import edu.ahau.graduationproject.dto.AnswerDTO;
 import edu.ahau.graduationproject.mapper.AnswerMapper;
 import edu.ahau.graduationproject.mapper.QuestionMapper;
+import edu.ahau.graduationproject.mapper.TopMapper;
 import edu.ahau.graduationproject.service.AnswerService;
 import edu.ahau.graduationproject.utils.IDUtil;
 import edu.ahau.graduationproject.vo.FileInfor;
-import jdk.nashorn.internal.objects.annotations.Where;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import sun.security.krb5.internal.crypto.Des;
 
 import javax.naming.Name;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 /**
@@ -70,6 +61,7 @@ public class AllHomeController {
         String author = IDUtil.getAuthor(request);
         String information = "/all/home";
         if ("teacher".equals(author)) {
+            request.getSession().setAttribute("courseid","-1");
             information = teacherController.information(request, model);
         }else if ("student".equals(author)){
             information = studentController.information(request,model);
@@ -79,7 +71,6 @@ public class AllHomeController {
     }
     @GetMapping("/{url}")
     public String goToURL(@PathVariable String url){
-        log.info("url---->{}",url);
         return "all/"+url;
     }
 
@@ -89,7 +80,6 @@ public class AllHomeController {
                                              @RequestParam(value = "text") String text,
                                              @RequestPart("photos") MultipartFile[] files) throws ParseException, IOException {
 
-        log.info("size:{}",files.length);
         HashMap<String, String> map = new HashMap<>();
         boolean isSave = false;
         Question question = new Question();
@@ -138,12 +128,10 @@ public class AllHomeController {
                 //获取存储路径
                 pathValue = pathValue.append("\\").append(IDUtil.getID(request))
                         .append("\\").append(questionid).append("\\").append(originalFilename);
-                log.info("pathValue{}",pathValue);
                 String path = pathValue.toString();
                 File file1 = new File(path);
                 if (!file1.getParentFile().exists()) {
                     boolean mkdirs = file1.mkdirs();
-                    log.info("------>{}",mkdirs);
                 }
                     try {
 
@@ -167,7 +155,6 @@ public class AllHomeController {
         map.put("msg","");
         map.put("code","0");
         List<FileInfor> list = new ArrayList<>();
-        log.info("session{}",session.getAttribute("selFileById"));
         if (session.getAttribute("selFileById") == null) {
             String path = "G:\\graduation";
             File pathFile = new File(path);
@@ -218,7 +205,6 @@ public class AllHomeController {
         HashMap<String, String> map = new HashMap<>();
         String path = "G:\\graduation" + "\\" + infor.getUpper() + "\\" + infor.getFileName();
 
-        log.info("path:{}",path);
         map.put("status","0");
         //需要下载的文件
         File srcFile = new File(path);
@@ -233,7 +219,6 @@ public class AllHomeController {
         }
 
 
-        log.info("dest{}",dest);
         File dstFile = new File(des.toString());
         if (!dstFile.getParentFile().exists()){
             dstFile.getParentFile().mkdirs();
@@ -295,34 +280,68 @@ public class AllHomeController {
     }
     @GetMapping("/answer")
     // id为questionID
-    public String answer(String text,String nameid,Integer id,Model model){
+    public String answer(String text,String nameid,Integer id,HttpSession session){
+        // 序列显示
+        Vector<Answer1> answer1Vector = new Vector<>();
+
+        session.setAttribute("zhangtext",text);
+        session.setAttribute("zhangnameid",nameid);
+        session.setAttribute("zhangid", id);
+        List<Integer> idList = new ArrayList<>();
+
         List<AnswerDTO> questionDTO = new ArrayList<>();
         List<String> images = answerService.findQuestionImage(id);
         AnswerDTO answerDTO = new AnswerDTO(nameid, text, images, id);
         questionDTO.add(answerDTO);
-        List<Answer1> answer1s = new ArrayList<>();
         List<Integer> ids = answerMapper.selectaLLAnswerId(id);
 
-        // 根据question_id查询到所有的answerid
+        //找出置顶的回答， 非一个。
+        for (Integer id1 : ids) {
+            Integer flag = answerService.findFlag(id1);
+            if (flag == null || flag == 0 || flag == 1){
+                continue;
+            }
+            String answerId = answerService.findAnserId(id1);
+            String answerImage = answerService.findAnswerImage(id1);
+            String webImage = "/files";
+            String viewImage = null;
+
+            if (answerImage.endsWith(".jpg")) {
+                viewImage = answerImage.replace("G:/graduationQuestion",webImage);
+            }
+            String answerText = answerService.findAnswerText(id1);
+
+            Answer1 answer1 = new Answer1(answerId, answerText, viewImage, id1);
+            if (flag == 1){
+                answer1Vector.add(answer1);
+                idList.add(id1);
+            }
+        }
+        // 添加剩下的
         Iterator<Integer> iterator = ids.iterator();
         while (iterator.hasNext()){
             Integer next = iterator.next();
-            log.info("{}",next);
             String answerId = answerService.findAnserId(next);
-            log.info("answer ------> {},answerService.findAnserId(next)");
             String answerImage = answerService.findAnswerImage(next);
             String webImage = "/files";
             String viewImage = null;
+
+            if (idList.contains(next)){
+                continue;
+            }
             if (answerImage.endsWith(".jpg")) {
                viewImage = answerImage.replace("G:/graduationQuestion",webImage);
             }
             String answerText = answerService.findAnswerText(next);
+
             Answer1 answer1 = new Answer1(answerId, answerText, viewImage, next);
-            answer1s.add(answer1);
+            answer1Vector.add(answer1);
         }
 
-        model.addAttribute("ques",answerDTO);
-        model.addAttribute("answers",answer1s);
+        session.setAttribute("ques", answerDTO);
+        session.setAttribute("answers",answer1Vector);
+
+
         return "all/answersandquestion";
     }
     @PostMapping("/raiseanswer")
@@ -340,7 +359,6 @@ public class AllHomeController {
         File dest = new File(pathname);
         if (!dest.getParentFile().exists()){
             boolean mkdirs = dest.getParentFile().mkdirs();
-            log.info("123123123123");
         }
         //上传时间
         Date date = new Date();
@@ -350,9 +368,27 @@ public class AllHomeController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Answer answer = new Answer(id,text,pathname,date,userId,name);
+        int flag = 0;
+        Answer answer = new Answer(id,text,pathname,date,userId,name,flag);
 
         boolean b = answerMapper.insertAnswerText(answer);
         return "all/success";
+    }
+
+    @Autowired
+    private TopMapper topMapper;
+    @GetMapping("/top")
+    public String getTop(@RequestParam("isTop") String isTop, @RequestParam("id") int id,HttpSession session) {
+
+        if ("true".equals(isTop)){
+            topMapper.updateAnswerTop(id);
+        }
+
+
+        String zhangtext = (String)session.getAttribute("zhangtext");
+        String zhangnameid = (String)session.getAttribute("zhangnameid");
+        Integer zhangid = (Integer) session.getAttribute("zhangid");
+        return answer(zhangtext, zhangnameid, zhangid, session);
+
     }
 }

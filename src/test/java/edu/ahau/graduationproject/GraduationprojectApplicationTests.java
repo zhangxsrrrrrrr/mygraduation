@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -61,11 +62,7 @@ class GraduationprojectApplicationTests {
         List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades("1");
         System.out.println(allStudentGradesDTOS.toString());
     }
-    @Test
-    public void test123(){
-        int i = teacherMapper.updateGradesById("17112003", "45", "1");
-        System.out.println(i);
-    }
+
     @Autowired
     private ImportFileMapper fileMapper;
     @Test
@@ -181,5 +178,11 @@ class GraduationprojectApplicationTests {
         String answerImage = answerService.findAnswerImage(1);
         System.out.println(answerImage);
 
+    }
+
+
+    @Test
+    public void testAn(){
+//        teacherMapper.updateGradesById(student.getId(),student.getGrade(),student.getCourseId(),student.getClassPoint());
     }
 }

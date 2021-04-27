@@ -2,10 +2,7 @@ package edu.ahau.graduationproject.service.impl;
 
 import edu.ahau.graduationproject.domain.Student;
 import edu.ahau.graduationproject.domain.Teacher;
-import edu.ahau.graduationproject.mapper.AnswerMapper;
-import edu.ahau.graduationproject.mapper.QuestionMapper;
-import edu.ahau.graduationproject.mapper.StudentMapper;
-import edu.ahau.graduationproject.mapper.TeacherMapper;
+import edu.ahau.graduationproject.mapper.*;
 import edu.ahau.graduationproject.service.AnswerService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +27,8 @@ public class AnswerServiceImpl implements AnswerService {
     private QuestionMapper questionMapper;
     @Autowired
     private AnswerMapper answerMapper;
+    @Autowired
+    private TopMapper topMapper;
     @Override
     public String findAnswerImage(int answerId) {
         String fileString = answerMapper.selectAnswerImage(answerId);
@@ -91,6 +90,12 @@ public class AnswerServiceImpl implements AnswerService {
             return student.getStuName();
         }
 
+    }
+
+    @Override
+    public Integer findFlag(int id) {
+
+        return topMapper.selectAnswerFlag(id);
     }
 
 

@@ -30,6 +30,12 @@
 					</div>
 				</div>
 				<div class="layui-form-item">
+					<label class="layui-form-label">课程表现分</label>
+					<div class="layui-input-block">
+						<input type="text" name="classPoint"  placeholder="请输入0~15" class="layui-input" lay-verify="required">
+					</div>
+				</div>
+				<div class="layui-form-item">
 					<label class="layui-form-label">成绩</label>
 					<div class="layui-input-block">
 						<input type="text" name="grade" class="layui-input" lay-verify="required">
@@ -80,10 +86,14 @@
 					,cols: [
 							[ //表头
 						{field: 'courseId', title: '课程号', width:80, sort: true, fixed: 'left'}
-						,{field: 'id', title: '学号', width:80, sort: true}
+						,{field: 'id', title: '学号', width:100, sort: true}
 						,{field: 'username', title: '姓名', width:80}
 						,{field: 'course', title: '课程名字', width: 90}
-						,{field: 'grade', title: '成绩', width:80, sort: true}
+						,{field: 'grade', title: '笔试成绩', width:110, sort: true}
+						,{field: 'answerNum', title: '评论次数', width:110, sort: true}
+						,{field: 'questionNum', title: '提问次数', width:110, sort: true}
+						,{field: 'usualGrade', title: '论坛分', width:110, sort: true}
+						,{field: 'classPoint', title: '课堂表现分', width:120, sort: true}
 						,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
 					]
 					],

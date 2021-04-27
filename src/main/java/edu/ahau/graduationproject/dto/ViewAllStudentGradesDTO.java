@@ -1,7 +1,6 @@
 package edu.ahau.graduationproject.dto;
 
 import lombok.Data;
-import lombok.ToString;
 
 import java.io.Serializable;
 
@@ -13,13 +12,15 @@ import java.io.Serializable;
  * 查询某一门课所有学生成绩
  */
 @Data
-@ToString
-public class AllStudentGradesDTO implements Serializable {
+public class ViewAllStudentGradesDTO implements Serializable {
     private static final long serialVersionUID = -7986323315109647110L;
     private String id;
     private String username;
     private String course;
     private String grade;
     private String courseId;
+    private Long questionNum;
+    private Long answerNum;
+    private Double usualGrade;
     private int classPoint;
 }

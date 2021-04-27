@@ -5,14 +5,13 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.annotation.ResponseJSONP;
 import edu.ahau.graduationproject.domain.Teacher;
-import edu.ahau.graduationproject.dto.AllStudentGradesDTO;
-import edu.ahau.graduationproject.dto.CourseOfTeacherDTO;
-import edu.ahau.graduationproject.dto.FileName;
-import edu.ahau.graduationproject.dto.StuInforExcelDTO;
+import edu.ahau.graduationproject.dto.*;
 import edu.ahau.graduationproject.mapper.ImportFileMapper;
+import edu.ahau.graduationproject.mapper.QryAnswerAndQuestionNum;
 import edu.ahau.graduationproject.mapper.TeacherMapper;
 import edu.ahau.graduationproject.utils.ExcelUtil;
 import edu.ahau.graduationproject.utils.FileUtil;
+import edu.ahau.graduationproject.utils.GradeUtil;
 import edu.ahau.graduationproject.utils.IDUtil;
 import edu.ahau.graduationproject.vo.FileInfor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +30,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
@@ -162,6 +162,67 @@ public class TeacherController {
         return "teacher/viewgrades";
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/viewgrade",method = RequestMethod.GET)
+    public Object viewAllStudentGrade(HttpServletRequest request,
+                                  HttpServletResponse response) throws ServletException, IOException {
+        HashMap<String, Object> map = new HashMap<>();
+
+        String courseid = (String) request.getSession().getAttribute("courseid");
+
+        ArrayList<ViewAllStudentGradesDTO> outList = new ArrayList<>();
+        List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades(courseid);
+        for (AllStudentGradesDTO studentInfo : allStudentGradesDTOS) {
+            ViewAllStudentGradesDTO studentGradesOut = new ViewAllStudentGradesDTO();
+            String id = studentInfo.getId();
+            studentGradesOut.setCourse(studentInfo.getCourse());
+            studentGradesOut.setCourseId(studentInfo.getCourseId());
+            studentGradesOut.setUsername(studentInfo.getUsername());
+            studentGradesOut.setId(studentInfo.getId());
+
+
+            long answerNum = query.selecteAnswerNum(id);
+            long questionNum = query.selecteQuestionNum(id);
+            double usualGrade = GradeUtil.calUsualGrade(answerNum, questionNum);
+            studentGradesOut.setAnswerNum(answerNum);
+            studentGradesOut.setQuestionNum(questionNum);
+
+
+            String grade = studentInfo.getGrade();
+            if (String.valueOf(grade).contains("-")){
+                grade = "0";
+            }
+
+            String format = String.format("%.1f", Double.parseDouble(grade));
+
+            double v = Double.parseDouble(format) * 0.7d + studentInfo.getClassPoint();
+            String format1 = String.format("%.1f", v);
+
+
+            studentGradesOut.setUsualGrade(usualGrade);
+            studentGradesOut.setGrade(format1);
+            outList.add(studentGradesOut);
+        }
+
+        //查询课程的信息
+        List<String> ids = teacherMapper.selectCourseIDById(IDUtil.getID(request));
+        if (allStudentGradesDTOS == null){
+            map.put("code", 0);
+            map.put("msg", "请输入课程号");
+            map.put("data", allStudentGradesDTOS);
+            request.getRequestDispatcher("teacher/grades").forward(request, response);
+            return JSONObject.parse(JSON.toJSONString(map));
+        }
+
+
+        map.put("code", 0);
+        map.put("msg", "");
+        map.put("data", outList);
+        map.put("count", 2);
+        return JSONObject.parse(JSON.toJSONString(map));
+    }
+    @Autowired
+    private QryAnswerAndQuestionNum query;
     @ResponseJSONP
     @ResponseBody
     @GetMapping("/viewgrades")
@@ -169,31 +230,56 @@ public class TeacherController {
                                   HttpServletResponse response) throws ServletException, IOException {
         HashMap<String, Object> map = new HashMap<>();
 
-
         String courseid = (String) request.getSession().getAttribute("courseid");
+
+        ArrayList<ViewAllStudentGradesDTO> outList = new ArrayList<>();
+        List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades(courseid);
+        for (AllStudentGradesDTO studentInfo : allStudentGradesDTOS) {
+            ViewAllStudentGradesDTO studentGradesOut = new ViewAllStudentGradesDTO();
+            String id = studentInfo.getId();
+            studentGradesOut.setCourse(studentInfo.getCourse());
+            studentGradesOut.setCourseId(studentInfo.getCourseId());
+            studentGradesOut.setGrade(studentInfo.getGrade());
+            studentGradesOut.setUsername(studentInfo.getUsername());
+            studentGradesOut.setId(studentInfo.getId());
+
+            long answerNum = query.selecteAnswerNum(id);
+            long questionNum = query.selecteQuestionNum(id);
+            double usualGrade = GradeUtil.calUsualGrade(answerNum, questionNum);
+            studentGradesOut.setAnswerNum(answerNum);
+            studentGradesOut.setQuestionNum(questionNum);
+
+            studentGradesOut.setClassPoint(studentInfo.getClassPoint());
+            studentGradesOut.setUsualGrade(usualGrade);
+            outList.add(studentGradesOut);
+        }
 
         //查询课程的信息
         List<String> ids = teacherMapper.selectCourseIDById(IDUtil.getID(request));
-        if (!ids.contains(courseid)) {
-
+        if (allStudentGradesDTOS == null){
+            map.put("code", 0);
+            map.put("msg", "请输入课程号");
+            map.put("data", allStudentGradesDTOS);
             request.getRequestDispatcher("teacher/grades").forward(request, response);
-            return null;
+            return JSONObject.parse(JSON.toJSONString(map));
         }
-        List<AllStudentGradesDTO> allStudentGradesDTOS = teacherMapper.selectAllStudentGrades(courseid);
+
+
         map.put("code", 0);
         map.put("msg", "");
-        map.put("data", allStudentGradesDTOS);
+        map.put("data", outList);
         map.put("count", 2);
-        log.info("{}", JSONObject.parse(JSON.toJSONString(map)));
         return JSONObject.parse(JSON.toJSONString(map));
     }
 
     @ResponseBody
     @RequestMapping(value = "/edit", method = RequestMethod.PUT)
-    public Map<String, Object> updateGrades(@RequestBody AllStudentGradesDTO student ){
-        log.info("修改的学生{}",student);
+    public Map<String, Object> updateGrades(@RequestBody AllStudentGradesDTO student){
         HashMap<String, Object> map = new HashMap<>();
-        int result = teacherMapper.updateGradesById(student.getId(),student.getGrade(),student.getCourseId());
+        log.info(student.toString());
+        int result = teacherMapper.updateGradesById(student.getId(),student.getGrade(),student.getCourseId(),student.getClassPoint());
+
+        log.info("{}",result);
         if (result > 0) {
             map.put("status", 1);
         } else {
